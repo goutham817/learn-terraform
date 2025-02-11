@@ -1,0 +1,31 @@
+variable "instances" {
+  default = {
+    fronted = {}
+    mongodb = {}
+    catalogue ={}
+    redis = {}
+    user = {}
+    cart = {}
+    dispatch= {}
+    shipping = {}
+  }
+}
+
+resource "aws_instance" "instances" {
+  for_each = var.instances
+  ami           = "ami-09c813fb71547fc4f"
+  instance_type = "t3.small"
+  vpc_security_group_ids = ["sg-04bbe439f126319e7"]
+  tags = {
+    Name = each.key
+  }
+}
+
+resource "aws_route53_record" "record" {
+  for_each = var.instances
+  zone_id = "Z02249652EM5BAO495DZ1"
+  name    = "${each.key}-dev.devopsb78.online"
+  type    = "A"
+  ttl     = "30"
+  records = [aws_instance.instances[each.key].private_ip
+}

@@ -6,3 +6,11 @@ tags = {
     Name = "frontend"
   }
 }
+
+resource "aws_route53_record" "frontend" {
+  zone_id = Z0831747KRD8G7UKNE8H
+  name    = "frontend-dev.devopsb78.online"
+  type    = "A"
+  ttl     = 30
+  records = [aws_instance.frontend.private_ip]
+}
